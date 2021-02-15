@@ -18,7 +18,7 @@ public class Filer {
         this.map = new HashMap<Character, Integer>();
         input_file_name = System.getProperty("user.dir") + "/data/" + input_file_name;
         output_file_name = System.getProperty("user.dir") + "/data/" + output_file_name;
-        System.out.println(input_file_name);
+        System.out.println(input_file_name + '\n' + output_file_name);
         try {
             this.fileReader = new FileReader(input_file_name);
             this.fileWriter = new FileWriter(output_file_name);
@@ -46,14 +46,49 @@ public class Filer {
             this.map.put(c, 0);
             this.map.put((char)(c+32), 0);
         }
+        char tmp;
         for (int i = 0; i < this.buffer.length(); ++i) {
-            this.map.put(
-                    this.buffer.charAt(i),
-                    this.map.get(this.buffer.charAt(i)) + 1
-            );
+            tmp = this.buffer.charAt(i);
+            if (tmp >= 'a' && tmp <= 'z' || tmp >= 'A' && tmp <= 'Z') {
+                this.map.put(
+                        this.buffer.charAt(i),
+                        this.map.get(this.buffer.charAt(i)) + 1
+                );
+            }
         }
+        /*
         for (Map.Entry<Character, Integer> entry : this.map.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
+            if (entry.getValue() != 0) {
+                System.out.println(entry.getKey() + ": " + entry.getValue());
+            }
         }
+         */
+    }
+
+    public void writeToOutFile() {
+        for (Map.Entry<Character, Integer> entry : this.map.entrySet()) {
+            if (entry.getValue() > 0) {
+                try {
+                    this.fileWriter.write(entry.getKey().toString());
+                    this.fileWriter.write(": " + entry.getValue() + "\n");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        try {
+            this.fileWriter.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeToOutfileWithoutCases() {
+        for (char c = 'A'; c <= 'Z'; ++c) {
+            this.map.put(c,
+                    this.map.get(c) + this.map.get((char) (c+32)));
+            this.map.remove((char) (c+32));
+        }
+        this.writeToOutFile();
     }
 }
