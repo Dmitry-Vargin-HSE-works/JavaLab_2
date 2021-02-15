@@ -11,5 +11,7 @@ public class Main {
         filer.countCharacters();
         // filer.writeToOutFile();
         filer.writeToOutfileWithoutCases();
+
+        System.out.println();
     }
 }
